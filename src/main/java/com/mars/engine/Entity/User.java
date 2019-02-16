@@ -1,4 +1,4 @@
-package com.mars.engine.Data;
+package com.mars.engine.Entity;
 
 import javax.persistence.*;
 import javax.persistence.GenerationType;

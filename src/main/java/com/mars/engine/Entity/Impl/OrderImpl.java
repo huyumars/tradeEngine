@@ -1,26 +1,39 @@
-package com.mars.engine.DataImpl;
+package com.mars.engine.Entity.Impl;
 
-import com.mars.engine.Data.Order;
-import com.mars.engine.Data.Price;
+import com.mars.engine.Entity.Order;
+import com.mars.engine.Entity.Price;
+import com.mars.engine.Resource.OrderMgr;
 
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OrderImpl implements Order {
     String orderID;
     String item;
     Price price;
     Side side;
+    State state;
     OrderType type;
     int quantity;
     int filled;
 
+    static Map<String,Integer> IdTable = new HashMap<String,Integer>();
+    static synchronized String orderIDgenerator(String item){
+        if(IdTable.containsKey(item))
+            IdTable.put(item,IdTable.get(item)+1);
+        else IdTable.put(item,0);
+        return item+IdTable.get(item);
+    }
+
     public OrderImpl(String i, Price p, Side s,OrderType t,int q){
-        orderID = UUID.randomUUID().toString();
+        orderID = orderIDgenerator(i);
         item = i;
         price = p;
         side = s;
         type = t;
         quantity = q;
+        state = State.open;
+        OrderMgr.instance().addOrder(this);
     }
 
     @Override
@@ -49,6 +62,11 @@ public class OrderImpl implements Order {
     }
 
     @Override
+    public State state() {
+        return state;
+    }
+
+    @Override
     public int quantity() {
         return quantity;
     }
@@ -63,6 +81,9 @@ public class OrderImpl implements Order {
        if(quantity>leaveQuantity()) return false;
        else {
            filled += quantity;
+           if(leaveQuantity()==0){
+               state = State.filled;
+           }
            return true;
        }
     }

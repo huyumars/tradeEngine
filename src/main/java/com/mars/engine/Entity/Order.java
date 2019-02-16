@@ -1,4 +1,4 @@
-package com.mars.engine.Data;
+package com.mars.engine.Entity;
 
 public interface Order {
     enum Side{
@@ -11,14 +11,15 @@ public interface Order {
     }
     enum State {
         open,
-        filling,
-        filled
+        filled,
+        canceled,
     }
     String item();
     String orderID();
     Price price ();
     Side  side();
     OrderType type();
+    State state();
     int quantity();
     int filled();
     boolean fill(int quantity);

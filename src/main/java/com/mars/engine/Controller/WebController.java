@@ -1,7 +1,7 @@
 package com.mars.engine.Controller;
 
-import com.mars.engine.Data.UserRepository;
-import com.mars.engine.Data.User;
+import com.mars.engine.Dao.UserDao;
+import com.mars.engine.Entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +12,7 @@ import java.util.List;
 public class WebController {
 
     @Autowired
-    private UserRepository rep;
+    private UserDao rep;
 
     @RequestMapping("/hello")
     public String helloWorld(){
