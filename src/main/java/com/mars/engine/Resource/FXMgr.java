@@ -23,7 +23,7 @@ public class FXMgr {
     }
 
     public double fxRate(String from, String to){
-        if(from==to) return 1.0;
+        if(from.equals(to)) return 1.0;
         else{
             double r1 = rates.get(from);
             double r2 = rates.get(to);
