@@ -1,18 +1,28 @@
 package com.mars.engine;
 
+import com.mars.engine.Dao.FXRateDao;
+import com.mars.engine.Entity.FXRate;
 import com.mars.engine.Entity.Price;
 import com.mars.engine.Resource.FXMgr;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-public class PriceAndFxTest {
+public class PriceTest {
     @Before
     public void addFxInfo(){
-        FXMgr.instance().setRate("CNY",1.0);
-        FXMgr.instance().setRate("USD",7.0);
+        Price.fxMgr.setRate("CNY",1.0);
+        Price.fxMgr.setRate("USD",7.0);
+    }
+
+    @Test
+    public void FxPriceTest(){
+        Price cny = Price.Factory("7.0CNY");
+        Price usd = Price.Factory("1.0USD");
+        TestCase.assertTrue(cny.equals(usd));
     }
 
     @Test

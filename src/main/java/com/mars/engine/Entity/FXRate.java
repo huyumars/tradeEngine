@@ -12,8 +12,6 @@ import javax.persistence.Id;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class FXRate {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    Long id;
     private String currencyName;
     private double rate;
     protected FXRate() {}
@@ -21,4 +19,5 @@ public class FXRate {
         currencyName = cur;
         rate = r;
     }
+    public double rate() {return rate;}
 }

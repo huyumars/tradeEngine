@@ -1,6 +1,7 @@
 package com.mars.engine.Entity;
 
 import com.mars.engine.Resource.FXMgr;
+import com.mars.engine.Resource.impl.FXMgrMemImpl;
 
 public class Price implements Comparable<Price> {
     int number;
@@ -16,7 +17,7 @@ public class Price implements Comparable<Price> {
         else if (this==marketBuyPrice||o==marketSellPrice)  return 1;
         else if (this==marketSellPrice||o==marketBuyPrice)  return -1;
 
-        double fxr = FXMgr.instance().fxRate(this.currency,o.currency);
+        double fxr = fxMgr.fxRate(this.currency,o.currency);
         double delta = ((double)number*fxr/precision - (double) o.number/o.precision);
         if(Math.abs(delta)<=0.00001) return 0;
         else if (delta>0) return 1;
@@ -24,9 +25,8 @@ public class Price implements Comparable<Price> {
     }
     String currency;
 
-    private Price(Order.Side type){
-       //build for market order price
-    }
+    //build for market order price
+    private Price(Order.Side type){}
 
     public static Price Factory(String priceStr){
         if(priceStr.equals("marketBuyPrice")) return marketBuyPrice;
@@ -36,6 +36,9 @@ public class Price implements Comparable<Price> {
         double val = Double.valueOf(str);
         return new Price((int)(val*100), 100, cur);
     }
+
+    //default using memory cache
+    public static FXMgr fxMgr = new FXMgrMemImpl();
 
     public Price(int _number, int _precision, String _cur){
         number = _number;

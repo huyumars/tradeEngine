@@ -1,32 +1,24 @@
 package com.mars.engine.Resource;
 import com.mars.engine.Dao.FXRateDao;
+import com.mars.engine.Entity.FXRate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class FXMgr {
-    Map<String,Double> rates;
+public interface FXMgr {
 
-    static FXMgr mgr = new FXMgr();
+    void setRate(String cur, double rate);
 
-    static public FXMgr instance(){
-        return mgr;
-    }
+    boolean valid(String cur);
 
-    private FXMgr(){
-        rates = new HashMap<>();
-    }
+    double getRate(String cur);
 
-    public void setRate(String cur, double rate){
-        rates.put(cur,rate);
-    }
-
-    public double fxRate(String from, String to){
+    default double fxRate(String from, String to){
         if(from.equals(to)) return 1.0;
         else{
-            double r1 = rates.get(from);
-            double r2 = rates.get(to);
+            double r1 = getRate(from);
+            double r2 = getRate(to);
             return r1/r2;
         }
     }

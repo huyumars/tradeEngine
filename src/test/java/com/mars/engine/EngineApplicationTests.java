@@ -60,7 +60,7 @@ public class EngineApplicationTests {
         Random random = new Random();
         String item = symbols.get(random.nextInt(symbols.size()));
         int price = random.nextInt(10)+100;
-        Price p = new Price(price,100,"CNY");
+        Price p = new Price(price,100,random.nextBoolean()?"USD":"CNY");
         int qty = random.nextInt(100)+100;
         Order.Side side = random.nextBoolean()==true? Order.Side.BUY:Order.Side.SELL;
         return new LimtedOrder(item,p,side,qty);
