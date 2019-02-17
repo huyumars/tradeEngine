@@ -25,6 +25,16 @@ public class OrderImpl implements Order {
         return item+IdTable.get(item);
     }
 
+    public OrderImpl(Order other){
+        orderID = other.orderID();
+        item = other.item();
+        price = other.price();
+        side = other.side();
+        type = other.type();
+        quantity = other.quantity();
+        state = other.state();
+    }
+
     public OrderImpl(String i, Price p, Side s,OrderType t,int q){
         orderID = orderIDgenerator(i);
         item = i;
@@ -33,7 +43,6 @@ public class OrderImpl implements Order {
         type = t;
         quantity = q;
         state = State.open;
-        OrderMgr.instance().addOrder(this);
     }
 
     @Override
@@ -89,7 +98,27 @@ public class OrderImpl implements Order {
     }
 
     @Override
+    public void updatePrice(Price newPrice) {
+        // avoid change marketPrice
+        if(price==Price.marketSellPrice||price==Price.marketBuyPrice) return;
+        if(newPrice==Price.marketSellPrice||newPrice==Price.marketBuyPrice) return;
+        price = newPrice;
+    }
+
+    @Override
+    public void updateQty(int quantity) {
+        if(quantity<leaveQuantity()) return;
+        this.quantity = quantity;
+    }
+
+    @Override
+    public void cancel() {
+        state = State.canceled;
+    }
+
+    @Override
     public String toString(){
         return "[ Order:"+orderID()+" ("+ side().toString()+") "+ " has "+quantity()+" filled "+filled();
     }
+
 }

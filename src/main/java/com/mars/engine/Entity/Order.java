@@ -1,6 +1,6 @@
 package com.mars.engine.Entity;
 
-public interface Order {
+public interface Order extends Cloneable{
     enum Side{
         BUY,
         SELL
@@ -23,6 +23,12 @@ public interface Order {
     int quantity();
     int filled();
     boolean fill(int quantity);
+
+    //modify order
+    void updatePrice(Price newPrice);
+    void updateQty(int quantity);
+    void cancel();
+
     default int leaveQuantity() {
         return quantity()-filled();
     }

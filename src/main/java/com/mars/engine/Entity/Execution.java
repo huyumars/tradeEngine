@@ -12,30 +12,24 @@ public class Execution {
     long id;
 
     String orderId;
-
+    Order.Side  side;
     String filledPriceString;
     int filledQuantiy;
     Date  filledTime;
 
     protected Execution() {}
 
-
-
     public Execution(Order o, Price p, int q){
         filledQuantiy = q;
         filledTime = new Date();
         orderId = o.orderID();
         filledPriceString = p.toString();
-    }
-
-
-    public Order order() {
-        return OrderMgr.instance().getOrder(orderId);
+        side = o.side();
     }
 
 
     public Order.Side side() {
-        return order().side();
+        return side;
     }
 
 

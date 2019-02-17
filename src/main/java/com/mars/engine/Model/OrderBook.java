@@ -1,5 +1,6 @@
-package com.mars.engine.Service;
+package com.mars.engine.Model;
 
+import com.mars.engine.Entity.Execution;
 import com.mars.engine.Entity.Order;
 import com.mars.engine.Entity.Price;
 
@@ -12,13 +13,13 @@ public class OrderBook {
     String item;
     TreeMap<Price,List<Order>>  BuySide;
     TreeMap<Price,List<Order>> SellSide;
-    Price  marketPrice;
+    FillAlgo  algo;
 
     public OrderBook(String i, Price p){
         item = i;
-        marketPrice = p;
         BuySide = new TreeMap<>();
         SellSide = new TreeMap<>();
+        algo = new FillAlgo(p);
     }
 
     public void addOrder(Order order){
@@ -36,7 +37,14 @@ public class OrderBook {
         orderQueue.add(order);
     }
 
-    public void updateBook(Order order){
+    public boolean updateOrder(Order old, Order newOrder){
+        if(old.orderID()!=newOrder.orderID()) return false;
+        old.cancel();
+        addOrder(newOrder);
+        return true;
+    }
+
+    private void updateBook(Order order){
         if(order.state()== Order.State.canceled || order.state()==Order.State.filled){
             Map<Price,List<Order>> sideTree;
             if(order.side()==Order.Side.BUY) sideTree = BuySide;
@@ -48,21 +56,28 @@ public class OrderBook {
         }
     }
 
-    public void fillOrders(){
-        if(BuySide.isEmpty()||SellSide.isEmpty()) return;
-        Price bestBuyPrice = BuySide.lastKey();
-        Price bestSellPrice = SellSide.firstKey();
-        while(bestBuyPrice!=null&&bestSellPrice!=null&&bestBuyPrice.compareTo(bestSellPrice)>=0){
-            Order buyOrder = BuySide.get(bestBuyPrice).get(0);
-            Order sellOrder = SellSide.get(bestSellPrice).get(0);
-            marketPrice = FillEngine.FillOrder(buyOrder,sellOrder,marketPrice);
-            updateBook(buyOrder);
-            updateBook(sellOrder);
-            if(BuySide.isEmpty()||SellSide.isEmpty()) return;
-            bestBuyPrice = BuySide.lastKey();
-            bestSellPrice = SellSide.firstKey();
+    public List<Execution> fillOrders(){
+        if(!BuySide.isEmpty()&&!SellSide.isEmpty()) {
+            Price bestBuyPrice = BuySide.lastKey();
+            Price bestSellPrice = SellSide.firstKey();
+            while (bestBuyPrice != null && bestSellPrice != null && bestBuyPrice.compareTo(bestSellPrice) >= 0) {
+                Order buyOrder = BuySide.get(bestBuyPrice).get(0);
+                Order sellOrder = SellSide.get(bestSellPrice).get(0);
+                algo.fillOrder(buyOrder, sellOrder);
+                updateBook(buyOrder);
+                updateBook(sellOrder);
+                if (BuySide.isEmpty() || SellSide.isEmpty()) break;
+                bestBuyPrice = BuySide.lastKey();
+                bestSellPrice = SellSide.firstKey();
+            }
         }
+        return algo.getExecutions();
     }
+
+    public Price marketPrice(){
+        return algo.getMarketPrice();
+    }
+
 
 
 }

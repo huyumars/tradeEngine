@@ -7,12 +7,8 @@ import java.util.Map;
 
 public class OrderMgr {
     Map<String, Order>  orders;
-    static OrderMgr mgr = new OrderMgr();
-    public static OrderMgr instance(){
-        return mgr;
-    }
 
-    private OrderMgr(){
+    public OrderMgr(){
         orders = new HashMap<>();
     };
 
@@ -23,4 +19,10 @@ public class OrderMgr {
     public Order getOrder(String oid){
         return orders.get(oid);
     }
+
+    public boolean hasOrder(String oid){ return orders.containsKey(oid);}
+
+    public void update(String oid, Order o){ orders.put(oid,o);}
+
+
 }
