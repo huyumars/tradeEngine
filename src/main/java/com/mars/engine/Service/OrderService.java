@@ -29,7 +29,7 @@ public class OrderService {
     }
 
     @PostConstruct
-    public void registerCallback(){
+    private void registerCallback(){
         FXMgr mgr = new FXMgrDaoImpl(fxRateDao);
         Price.fxMgr = mgr;
     }
